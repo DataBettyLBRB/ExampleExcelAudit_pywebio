@@ -52,8 +52,8 @@ def main():
              results['PO Item Text'].to_string(index=False)],
         ])
 
+if __name__ == '__main__':
+    app.add_url_rule('/', 'webio_view', webio_view(main),
+                     methods=['GET', 'POST', 'OPTIONS'])
 
-app.add_url_rule('/', 'webio_view', webio_view(main),
-                 methods=['GET', 'POST', 'OPTIONS'])
-
-app.run(threaded=True, port=5000)
+    app.run(threaded=True, port=5000)
