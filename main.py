@@ -56,4 +56,4 @@ def main():
 app.add_url_rule('/', 'webio_view', webio_view(main),
                  methods=['GET', 'POST', 'OPTIONS'])
 
-app.run()
+app.run(threaded=True, port=5000)
