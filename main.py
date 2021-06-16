@@ -4,10 +4,13 @@ import pandas as pd
 from datetime import datetime
 import time
 import numpy as np
+
 from webIO import userXLSXUpload as webIO_upload
 from pywebio.output import *
 from pywebio.platform.flask import webio_view
+from pywebio import start_server
 from flask import Flask
+import argparse
 
 app = Flask(__name__)
 
@@ -52,8 +55,12 @@ def main():
              results['PO Item Text'].to_string(index=False)],
         ])
 
-if __name__ == '__main__':
-    app.add_url_rule('/', 'webio_view', webio_view(main),
-                     methods=['GET', 'POST', 'OPTIONS'])
+app.add_url_rule('/', 'webio_view', webio_view(main),
+                 methods=['GET', 'POST', 'OPTIONS'])
 
-    app.run(threaded=True, port=5000)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--port", type=int, default=8000)
+    args = parser.parse_args()
+
+    start_server(main, port=args.port)
