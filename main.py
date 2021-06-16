@@ -10,7 +10,6 @@ from pywebio.output import *
 from pywebio.platform.flask import webio_view
 from pywebio import start_server
 from flask import Flask
-import argparse
 
 app = Flask(__name__)
 
@@ -60,7 +59,7 @@ app.add_url_rule('/', 'webio_view', webio_view(main),
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", type=int, default=8000)
+    parser.add_argument("-p", "--port", type=int, default=8080)
     args = parser.parse_args()
 
-    start_server(main, port=args.port)
+    start_server(main,port=args.port)
