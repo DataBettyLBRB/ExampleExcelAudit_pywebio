@@ -11,6 +11,8 @@ from pywebio.platform.flask import webio_view
 from pywebio import start_server
 from flask import Flask
 
+import argparse
+
 app = Flask(__name__)
 
 # get files from filepath
@@ -62,4 +64,4 @@ if __name__ == '__main__':
     parser.add_argument("-p", "--port", type=int, default=8080)
     args = parser.parse_args()
 
-    start_server(main,port=args.port)
+    start_server(main,port=args.port, auto_open_webbrowser=True)
