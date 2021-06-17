@@ -58,7 +58,7 @@ def main():
     directory = os.path.expanduser('~/Documents')
     output = directory + '/output.xlsx'
 
-    put_text('Please find your downloaded file in the documents folder: ' + output)
+    put_text('Please find your downloaded file in the documents: ' + output)
     put_text('\n')
 
     put_table([
