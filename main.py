@@ -11,6 +11,7 @@ from pywebio.platform.flask import webio_view
 from pywebio import start_server
 from flask import Flask
 from pandas import ExcelWriter
+from PIL import Image
 
 # functions created for program
 from webIO import userXLSXUpload as webIO_upload
@@ -65,6 +66,9 @@ def create_df():
 def main():
     failed, passed, fvo, ao, ch = create_df()
     output = 'output.xlsx'
+
+    img = Image.open('image001.png')
+    put_image(img)
 
     passed_count = len(passed)
     failed_count = len(failed)

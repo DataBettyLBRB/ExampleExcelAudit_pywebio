@@ -38,6 +38,7 @@ parsel==1.6.0
 parso==0.8.2
 pexpect==4.8.0
 pickleshare==0.7.5
+Pillow==8.2.0
 plotly==4.14.3
 prompt-toolkit==3.0.18
 Protego==0.1.16
