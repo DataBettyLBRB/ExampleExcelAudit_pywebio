@@ -5,11 +5,13 @@ from datetime import datetime
 import time
 import numpy as np
 
+from pywebio.input import file_upload
 from webIO import userXLSXUpload as webIO_upload
 from pywebio.output import *
 from pywebio.platform.flask import webio_view
 from pywebio import start_server
 from flask import Flask
+from pandas import ExcelWriter
 
 import argparse
 
@@ -41,20 +43,37 @@ def create_df():
     AO = dateConversion(AO)
     CH = dateConversion(CH)
 
-    result = df.loc[(Purchase < FVO) |
+    failed = df.loc[(Purchase < FVO) |
                      (Purchase < AO) |
                      (Purchase < CH)]
 
-    return result
+    passed = df.loc[(Purchase > FVO) |
+                     (Purchase > AO) |
+                     (Purchase > CH)]
+
+    return failed, passed
 
 def main():
-    results = create_df()
+    failed, passed = create_df()
+    directory = os.path.abspath(os.getcwd())
+
+    put_text('Please find your downloaded file at this location: ' + directory)
+    put_text('\n')
+
     put_table([
             ['Merchant Name', 'Purchase Date', 'PO Item Text'],
-            [results['Merchant Name'].to_string(index=False),
-             results['Purchase Date'].to_string(index=False),
-             results['PO Item Text'].to_string(index=False)],
+            [failed['Merchant Name'].to_string(index=False),
+             failed['Purchase Date'].to_string(index=False),
+             failed['PO Item Text'].to_string(index=False)],
         ])
+
+    output = directory+'/output2.xlsx'
+    writer = pd.ExcelWriter(output)
+
+    failed.to_excel(writer, sheet_name='failed')
+    passed.to_excel(writer, sheet_name='passed')
+
+    writer.save()
 
 app.add_url_rule('/', 'webio_view', webio_view(main),
                  methods=['GET', 'POST', 'OPTIONS'])
