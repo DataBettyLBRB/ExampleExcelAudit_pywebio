@@ -67,7 +67,7 @@ def main():
              failed['PO Item Text'].to_string(index=False)],
         ])
 
-    output = directory+'/output2.xlsx'
+    output = directory+'/output.xlsx'
     writer = pd.ExcelWriter(output)
 
     failed.to_excel(writer, sheet_name='failed')
