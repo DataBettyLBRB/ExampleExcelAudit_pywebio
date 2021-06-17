@@ -6,12 +6,16 @@ import time
 import numpy as np
 
 from pywebio.input import file_upload
-from webIO import userXLSXUpload as webIO_upload
 from pywebio.output import *
 from pywebio.platform.flask import webio_view
 from pywebio import start_server
 from flask import Flask
 from pandas import ExcelWriter
+from PIL import Image
+
+# functions created for program
+from webIO import userXLSXUpload as webIO_upload
+from rowsIndex import createIndex as idx
 
 import argparse
 
@@ -28,6 +32,7 @@ def dateConversion(column):
 def create_df():
 
     content = webIO_upload()
+    content = idx(content)
 
     frame = content[~content['PO Item Text'].str.contains('#', na=False)]
     df = pd.DataFrame(frame)
@@ -47,23 +52,50 @@ def create_df():
                      (Purchase < AO) |
                      (Purchase < CH)]
 
+    fvo = failed.loc[(Purchase < FVO)]
+    ao = failed.loc[(Purchase < AO)]
+    ch = failed.loc[(Purchase < CH)]
+
+
     passed = df.loc[(Purchase > FVO) |
                      (Purchase > AO) |
                      (Purchase > CH)]
 
-    return failed, passed
+    return failed, passed, fvo, ao, ch
 
 def main():
-    failed, passed = create_df()
+    failed, passed, fvo, ao, ch = create_df()
     directory = os.path.expanduser('~/Desktop')
     output = directory + '/output.xlsx'
 
+    img = Image.open('image001.png')
+    put_image(img)
+
+    passed_count = len(passed)
+    failed_count = len(failed)
+    validation_count = passed_count + failed_count
+
+    put_text('\n')
     put_text('Please find your downloaded file in the documents: ' + output)
     put_text('\n')
 
+    put_text('Audit Count: ' + str(validation_count))
+    put_text('Pass Count: ' + str(passed_count))
+    put_text('Fail Count: ' + str(failed_count))
+    put_text('\n')
+
     put_table([
-            ['Merchant Name', 'Purchase Date', 'PO Item Text'],
-            [failed['Merchant Name'].to_string(index=False),
+        ['Department', 'Fail Count', 'Row'],
+        ['FVO', len(fvo), list(fvo['Row'])],
+        ['AO', len(ao), list(ao['Row'])],
+        ['CH', len(ch), list(ch['Row'])]
+    ])
+
+    put_html('<h3>List of Failed Tests</h3>')
+    put_table([
+            ['Row', 'Merchant Name', 'Purchase Date', 'PO Item Text'],
+            [failed['Row'].to_string(index=False),
+             failed['Merchant Name'].to_string(index=False),
              failed['Purchase Date'].to_string(index=False),
              failed['PO Item Text'].to_string(index=False)],
         ])
