@@ -56,8 +56,9 @@ def create_df():
 def main():
     failed, passed = create_df()
     directory = os.path.abspath(os.getcwd())
+    output = directory + '/output.xlsx'
 
-    put_text('Please find your downloaded file at this location: ' + directory)
+    put_text('Please find your downloaded file at this location: ' + output)
     put_text('\n')
 
     put_table([
@@ -67,7 +68,6 @@ def main():
              failed['PO Item Text'].to_string(index=False)],
         ])
 
-    output = directory+'/output.xlsx'
     writer = pd.ExcelWriter(output)
 
     failed.to_excel(writer, sheet_name='failed')
