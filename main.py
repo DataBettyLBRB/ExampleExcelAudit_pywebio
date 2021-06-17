@@ -55,7 +55,7 @@ def create_df():
 
 def main():
     failed, passed = create_df()
-    directory = os.path.expanduser('~/Documents')
+    directory = os.path.expanduser('~/Desktop')
     output = directory + '/output.xlsx'
 
     put_text('Please find your downloaded file in the documents: ' + output)
