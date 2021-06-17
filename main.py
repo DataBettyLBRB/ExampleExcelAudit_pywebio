@@ -64,8 +64,7 @@ def create_df():
 
 def main():
     failed, passed, fvo, ao, ch = create_df()
-    directory = os.path.expanduser('~/Desktop')
-    output = directory + '/output.xlsx'
+    output = 'output.xlsx'
 
     passed_count = len(passed)
     failed_count = len(failed)
