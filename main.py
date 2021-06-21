@@ -99,12 +99,19 @@ def main():
              failed['PO Item Text'].to_string(index=False)],
         ])
 
-    writer = pd.ExcelWriter(output)
+    img2 = Image.open('image008.png')
+    img3 = Image.open('image009.png')
 
-    failed.to_excel(writer, sheet_name='failed')
-    passed.to_excel(writer, sheet_name='passed')
+    put_text('\n \n \n \n')
+    put_image(img2, width='75px')
+    put_image(img3, width='75px')
 
-    writer.save()
+    #writer = pd.ExcelWriter(output)
+
+    #failed.to_excel(writer, sheet_name='failed')
+    #passed.to_excel(writer, sheet_name='passed')
+
+    #writer.save()
 
 app.add_url_rule('/', 'webio_view', webio_view(main),
                  methods=['GET', 'POST', 'OPTIONS'])
