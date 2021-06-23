@@ -21,16 +21,18 @@ import argparse
 
 app = Flask(__name__)
 
+
 # get files from filepath
 def getFiles(path):
     return glob.glob(path)
+
 
 # convert strings to dates
 def dateConversion(column):
     return column.astype('datetime64[ns]')
 
-def create_df():
 
+def create_df():
     content = webIO_upload()
     content = idx(content)
 
@@ -49,19 +51,19 @@ def create_df():
     CH = dateConversion(CH)
 
     failed = df.loc[(Purchase < FVO) |
-                     (Purchase < AO) |
-                     (Purchase < CH)]
+                    (Purchase < AO) |
+                    (Purchase < CH)]
 
     fvo = failed.loc[(Purchase < FVO)]
     ao = failed.loc[(Purchase < AO)]
     ch = failed.loc[(Purchase < CH)]
 
-
     passed = df.loc[(Purchase > FVO) |
-                     (Purchase > AO) |
-                     (Purchase > CH)]
+                    (Purchase > AO) |
+                    (Purchase > CH)]
 
     return failed, passed, fvo, ao, ch
+
 
 def main():
     failed, passed, fvo, ao, ch = create_df()
@@ -73,10 +75,6 @@ def main():
     passed_count = len(passed)
     failed_count = len(failed)
     validation_count = passed_count + failed_count
-
-    put_text('\n')
-    put_text('Please find your downloaded file in the documents: ' + output)
-    put_text('\n')
 
     put_text('Audit Count: ' + str(validation_count))
     put_text('Pass Count: ' + str(passed_count))
@@ -92,26 +90,27 @@ def main():
 
     put_html('<h3>List of Failed Tests</h3>')
     put_table([
-            ['Row', 'Merchant Name', 'Purchase Date', 'PO Item Text'],
-            [failed['Row'].to_string(index=False),
-             failed['Merchant Name'].to_string(index=False),
-             failed['Purchase Date'].to_string(index=False),
-             failed['PO Item Text'].to_string(index=False)],
-        ])
+        ['Row', 'Merchant Name', 'Purchase Date', 'PO Item Text'],
+        [failed['Row'].to_string(index=False),
+         failed['Merchant Name'].to_string(index=False),
+         failed['Purchase Date'].to_string(index=False),
+         failed['PO Item Text'].to_string(index=False)],
+    ])
 
     img2 = Image.open('image008.png')
-    img3 = Image.open('image009.png')
+    img3 = Image.open('corinth.png')
 
-    put_text('\n \n \n \n')
-    put_image(img2, width='75px')
-    put_image(img3, width='75px')
+    put_text('\n')
+    put_image(img2, width='85px')
+    put_image(img3, width='225px')
 
-    #writer = pd.ExcelWriter(output)
+    # writer = pd.ExcelWriter(output)
 
-    #failed.to_excel(writer, sheet_name='failed')
-    #passed.to_excel(writer, sheet_name='passed')
+    # failed.to_excel(writer, sheet_name='failed')
+    # passed.to_excel(writer, sheet_name='passed')
 
-    #writer.save()
+    # writer.save()
+
 
 app.add_url_rule('/', 'webio_view', webio_view(main),
                  methods=['GET', 'POST', 'OPTIONS'])
@@ -121,4 +120,4 @@ if __name__ == '__main__':
     parser.add_argument("-p", "--port", type=int, default=8080)
     args = parser.parse_args()
 
-    start_server(main,port=args.port, auto_open_webbrowser=True)
+    start_server(main, port=args.port, auto_open_webbrowser=True)
