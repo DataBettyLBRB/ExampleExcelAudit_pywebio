@@ -101,6 +101,15 @@ def main():
     increment_count = len(increment_greater[increment_greater['increment'] > 0])
     increment_cost = increment_greater['$'].sum()
 
+    increment_group1 = pd.DataFrame(increment_greater.groupby(['increment'])['Row'].count().reset_index())
+    increment_group1.columns = ['increment', 'count']
+    increment_group1['increment'] = increment_group1['increment'].values.astype(str)
+
+    increment_group2 = pd.DataFrame(increment_greater.groupby(['increment'])['Row']
+                                    .apply(list)).reset_index()
+    increment_group2['increment'] = increment_group2['increment'].values.astype(str)
+    increment_group = pd.merge(increment_group1, increment_group2, on='increment')
+
     personal_greater_than = df[df['personal_purchase_flag'] > 0]
     personal_count = len(personal_greater_than[personal_greater_than['personal_purchase_flag'] > 0])
     personal_cost = personal_greater_than['$'].sum()
@@ -137,13 +146,28 @@ def main():
     failed_count = len(failed)
 
     put_text('Audit Count: ' + str(validation_count))
-    put_text('Passed Validation Count: ' + str(passed_count))
-    put_text('Failed Validation Count: ' + str(failed_count))
+    put_text('Passed Validations Count: ' + str(passed_count))
+    put_text('Flagged Validations Count: ' + str(failed_count))
     put_text('\n')
 
-    put_html('<h3>Failed Validation Date Tests</h3>')
-    put_html('<h6>if the transaction was purchased before the approval of (FVO, AO, CH)</h6>')
+    put_html('<h3>Flagged Count For Each Test</h3>')
+    put_table([
+        ['Reason', 'Count', 'Cost'],
+        ['Validation Dates', len(failed_dates), round(sum(df['$']))],
+        ['Personal Purchases', personal_count, personal_cost],
+        ['Purchase > $1,000', increment_count, round(increment_cost)]
+    ])
 
+    put_html('<h3>Flagged Greater than $1,000 by Increment</h3>')
+    put_table([
+        ['Increment', 'Count', 'Rows'],
+        [increment_group['increment'].to_string(index=False),
+         increment_group['count'].to_string(index=False),
+         increment_group['Row'].to_string(index=False)]
+    ])
+
+    put_html('<h3>Flagged For Validation Dates</h3>')
+    put_html('<h6>For transactions purchased prior to approval from (FVO, AO, CH)</h6>')
     put_table([
         ['Department', 'Fail Count', 'Row'],
         ['FVO', len(fvo), list(fvo['Row'])],
@@ -152,13 +176,6 @@ def main():
     ])
 
     put_html('<h3>List of Failed Tests</h3>')
-    put_table([
-        ['Row', 'Merchant', 'Transaction Date', 'PO Item Short Text'],
-        [failed_dates['Row'].to_string(index=False),
-         failed_dates['Merchant'].to_string(index=False),
-         failed_dates['Transaction Date'].to_string(index=False),
-         failed_dates['PO Item Short Text'].to_string(index=False)],
-    ])
 
     img2 = Image.open('image008.png')
     img3 = Image.open('corinth.png')
