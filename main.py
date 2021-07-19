@@ -153,9 +153,9 @@ def main():
     put_html('<h3>Flagged Count For Each Test</h3>')
     put_table([
         ['Reason', 'Count', 'Cost'],
-        ['Validation Dates', len(failed_dates), round(sum(df['$']))],
-        ['Personal Purchases', personal_count, personal_cost],
-        ['Purchase > $1,000', increment_count, round(increment_cost)]
+        ['Validation Dates', len(failed_dates), "${:,.2f}".format(sum(df['$']))],
+        ['Potential Personal Purchases', personal_count, "${:,.2f}".format(personal_cost)],
+        ['Purchase > $1,000', increment_count, "${:,.2f}".format(increment_cost)]
     ])
 
     put_html('<h3>Flagged Greater than $1,000 by Increment</h3>')
@@ -174,8 +174,6 @@ def main():
         ['AO', len(ao), list(ao['Row'])],
         ['CH', len(ch), list(ch['Row'])]
     ])
-
-    put_html('<h3>List of Failed Tests</h3>')
 
     img2 = Image.open('image008.png')
     img3 = Image.open('corinth.png')
